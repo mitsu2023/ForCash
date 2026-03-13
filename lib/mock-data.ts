@@ -1,0 +1,16 @@
+export const mockAccounts = [
+  { id: "1", name: "Compte Principal", type: "PERSONAL", balance: 4250.75, currency: "EUR" },
+  { id: "2", name: "Épargne", type: "PERSONAL", balance: 12800.00, currency: "EUR" },
+  { id: "3", name: "Forcash SARL", type: "BUSINESS", balance: 38500.50, currency: "EUR" },
+]
+
+export const mockTransactions = [
+  { id: "1", accountId: "1", description: "Salaire mars", amount: 2800, type: "INCOME", date: "2025-03-01" },
+  { id: "2", accountId: "1", description: "Loyer", amount: -950, type: "EXPENSE", date: "2025-03-02" },
+  { id: "3", accountId: "1", description: "Courses Carrefour", amount: -87.40, type: "EXPENSE", date: "2025-03-05" },
+  { id: "4", accountId: "3", description: "Facture client A", amount: 5400, type: "INCOME", date: "2025-03-06" },
+  { id: "5", accountId: "2", description: "Virement épargne", amount: 500, type: "TRANSFER", date: "2025-03-07" },
+  { id: "6", accountId: "3", description: "Abonnement Notion", amount: -16, type: "EXPENSE", date: "2025-03-08" },
+  { id: "7", accountId: "1", description: "Remboursement ami", amount: 60, type: "INCOME", date: "2025-03-10" },
+  { id: "8", accountId: "3", description: "Facture client B", amount: 3200, type: "INCOME", date: "2025-03-12" },
+]
