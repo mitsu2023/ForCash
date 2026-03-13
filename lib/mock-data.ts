@@ -4,6 +4,13 @@ export const mockAccounts = [
   { id: "3", name: "Forcash SARL", type: "BUSINESS", balance: 38500.50, currency: "EUR", bank: "Société Générale" },
 ]
 
+export const mockTeam = [
+  { id: "1", name: "Alice Dupont",  initials: "AD", email: "alice.dupont@forcash.fr",   role: "Administrateur", status: "Actif",      joinedAt: "2024-01-10", lastSeen: "Il y a 5 minutes", isLastAdmin: true  },
+  { id: "2", name: "Marc Bernard",  initials: "MB", email: "marc.bernard@forcash.fr",   role: "Gestionnaire",   status: "Actif",      joinedAt: "2024-03-22", lastSeen: "Il y a 2 heures",  isLastAdmin: false },
+  { id: "3", name: "Sophie Chen",   initials: "SC", email: "sophie.chen@forcash.fr",    role: "Lecteur",        status: "Actif",      joinedAt: "2024-06-15", lastSeen: "Il y a 1 jour",    isLastAdmin: false },
+  { id: "4", name: "Thomas Roy",    initials: "TR", email: "thomas.roy@forcash.fr",     role: "Gestionnaire",   status: "En attente", joinedAt: "2025-02-01", lastSeen: "Jamais connecté",  isLastAdmin: false },
+]
+
 export const mockTransactions = [
   { id: "1", accountId: "1", description: "Salaire mars", amount: 2800, type: "INCOME", date: "2025-03-01", category: "Salaires", status: "Validée" },
   { id: "2", accountId: "1", description: "Loyer", amount: -950, type: "EXPENSE", date: "2025-03-02", category: "Loyers", status: "Validée" },
