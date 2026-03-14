@@ -79,10 +79,10 @@ export function NewTransactionDialog() {
                 <option value="">Sélectionner une catégorie</option>
                 <option value="Ventes">Ventes</option>
                 <option value="Salaires">Salaires</option>
-                <option value="Loyer">Achat</option>
+                <option value="Virements">Achat</option>
                 <option value="Abonnements">Abonnements</option>
                 <option value="Fournitures">Fournitures</option>
-                <option value="Impôts">Impôts</option>
+                <option value="Loisir">Impôts</option>
                 <option value="Autre">Autre</option>
               </select>
             </div>

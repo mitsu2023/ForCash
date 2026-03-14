@@ -1,4 +1,5 @@
 import { mockAccounts, mockTransactions } from "@/lib/mock-data"
+import { resolvedAmount } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import {
   Table,
@@ -71,8 +72,8 @@ export default function AccountDetailPage({ params }: { params: { id: string } }
                 <TableCell className="text-gray-500 text-sm">{tx.date}</TableCell>
                 <TableCell className="text-gray-900 font-medium">{tx.description}</TableCell>
                 <TableCell>{typeBadge(tx.type)}</TableCell>
-                <TableCell className={`text-right font-semibold ${tx.amount > 0 ? "text-emerald-600" : "text-red-500"}`}>
-                  {tx.amount > 0 ? "+" : ""}{fmt.format(tx.amount)}
+                <TableCell className={`text-right font-semibold ${tx.type === "TRANSFER" ? "text-gray-600" : resolvedAmount(tx.amount, tx.type) > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                  {resolvedAmount(tx.amount, tx.type) > 0 ? "+" : ""}{fmt.format(resolvedAmount(tx.amount, tx.type))}
                 </TableCell>
               </TableRow>
             ))}

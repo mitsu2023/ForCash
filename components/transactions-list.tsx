@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Search, ArrowUpDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, MoreHorizontal, Calendar, Eye, StickyNote, AlertTriangle, X } from "lucide-react"
 import { mockAccounts } from "@/lib/mock-data"
+import { resolvedAmount } from "@/lib/utils"
 
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
 
@@ -68,7 +69,8 @@ const TYPE_LABELS: Record<string, string> = {
 
 function TransactionDetailModal({ tx, onClose }: { tx: Transaction; onClose: () => void }) {
   const account = mockAccounts.find((a) => a.id === tx.accountId)
-  const isPositive = tx.amount > 0
+  const amount = resolvedAmount(tx.amount, tx.type)
+  const isPositive = amount > 0
   const amountColor = tx.type === "TRANSFER" ? "text-gray-700" : isPositive ? "text-emerald-600" : "text-red-500"
 
   useEffect(() => {
@@ -106,7 +108,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: Transaction; onClose: () 
         <div className="px-6 py-5 border-b border-gray-100">
           <p className="text-xs text-gray-400 mb-1">Montant</p>
           <p className={`text-3xl font-bold ${amountColor}`}>
-            {isPositive ? "+" : ""}{fmt.format(tx.amount)}
+            {isPositive ? "+" : ""}{fmt.format(amount)}
           </p>
         </div>
 
@@ -299,7 +301,8 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
           ) : (
             filtered.map((tx) => {
               const account = mockAccounts.find((a) => a.id === tx.accountId)
-              const isPositive = tx.amount > 0
+              const displayAmt = resolvedAmount(tx.amount, tx.type)
+              const isPositive = displayAmt > 0
               const amountColor = tx.type === "TRANSFER"
                 ? "text-gray-600"
                 : isPositive
@@ -324,7 +327,7 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
                     <CategoryBadge category={tx.category} />
                     <StatusBadge status={tx.status} />
                     <p className={`text-sm font-semibold w-28 text-right ${amountColor}`}>
-                      {isPositive ? "+" : ""}{fmt.format(tx.amount)}
+                      {isPositive ? "+" : ""}{fmt.format(displayAmt)}
                     </p>
                     <TransactionMenu tx={tx} />
                   </div>

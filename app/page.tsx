@@ -1,4 +1,5 @@
 import { mockAccounts, mockTransactions } from "@/lib/mock-data"
+import { resolvedAmount } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
@@ -112,15 +113,16 @@ export default function DashboardPage() {
           <CardContent className="space-y-2">
             {recentTransactions.map((tx) => {
               const account = mockAccounts.find((a) => a.id === tx.accountId)
-              const isPositive = tx.amount > 0
+              const displayAmt = resolvedAmount(tx.amount, tx.type)
+              const isPositive = displayAmt > 0
               return (
                 <div key={tx.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{tx.description}</p>
                     <p className="text-xs text-gray-400">{account?.name} · {tx.date}</p>
                   </div>
-                  <p className={`text-sm font-semibold ${isPositive ? "text-emerald-600" : "text-red-500"}`}>
-                    {isPositive ? "+" : ""}{fmt.format(tx.amount)}
+                  <p className={`text-sm font-semibold ${tx.type === "TRANSFER" ? "text-gray-600" : isPositive ? "text-emerald-600" : "text-red-500"}`}>
+                    {isPositive ? "+" : ""}{fmt.format(displayAmt)}
                   </p>
                 </div>
               )

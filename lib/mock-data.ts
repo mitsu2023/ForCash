@@ -13,12 +13,14 @@ export const mockTeam = [
 
 export const mockTransactions = [
   { id: "1", accountId: "1", description: "Salaire mars", amount: 2800, type: "INCOME", date: "2025-03-01", category: "Salaires", status: "Validée" },
-  { id: "2", accountId: "1", description: "Loyer", amount: -950, type: "EXPENSE", date: "2025-03-02", category: "Loyers", status: "Validée" },
-  { id: "3", accountId: "1", description: "Courses Carrefour", amount: -87.40, type: "EXPENSE", date: "2025-03-05", category: "Fournisseurs", status: "Validée" },
+  { id: "2", accountId: "1", description: "Loyer", amount: 950, type: "EXPENSE", date: "2025-03-02", category: "Autre", status: "Validée" },
+  { id: "3", accountId: "1", description: "Courses Carrefour", amount: 87.40, type: "EXPENSE", date: "2025-03-05", category: "Autre", status: "Validée" },
   { id: "4", accountId: "3", description: "Facture client A", amount: 5400, type: "INCOME", date: "2025-03-06", category: "Ventes", status: "Validée" },
   { id: "5", accountId: "2", description: "Virement épargne", amount: 500, type: "TRANSFER", date: "2025-03-07", category: "Virements", status: "Validée" },
-  { id: "6", accountId: "3", description: "Abonnement Notion", amount: -16, type: "EXPENSE", date: "2025-03-08", category: "Abonnements", status: "Validée" },
-  { id: "7", accountId: "1", description: "Remboursement ami", amount: 60, type: "INCOME", date: "2025-03-10", category: "Divers", status: "Validée" },
+  { id: "6", accountId: "3", description: "Abonnement Notion", amount: 16, type: "EXPENSE", date: "2025-03-08", category: "Abonnements", status: "Validée" },
+  { id: "7", accountId: "1", description: "Remboursement ami", amount: 60, type: "INCOME", date: "2025-03-10", category: "Autre", status: "Validée" },
   { id: "8", accountId: "3", description: "Facture client B", amount: 3200, type: "INCOME", date: "2025-03-12", category: "Ventes", status: "Validée" },
-  { id: "9", accountId: "1", description: "Achat Genshin Impact", amount: 80, type: "EXPENSE", date: "2025-03-14", category: "Loisir", status: "Validée" }
+  { id: "9", accountId: "1", description: "Achat Genshin Impact", amount: 80, type: "EXPENSE", date: "2025-03-14", category: "Loisir", status: "Validée" },
+  { id: "10", accountId: "3", description: "Abonnement Claude", amount: 200, type: "EXPENSE", date: "2025-03-14", category: "Abonnements", status: "Validée" },
 ]
+
