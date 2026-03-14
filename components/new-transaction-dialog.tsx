@@ -69,6 +69,23 @@ export function NewTransactionDialog() {
                 className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus-visible:ring-gray-900"
               />
             </div>
+
+            {/* Catégorie */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Catégorie
+              </label>
+              <select className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/20 cursor-pointer">
+                <option value="">Sélectionner une catégorie</option>
+                <option value="Ventes">Ventes</option>
+                <option value="Salaires">Salaires</option>
+                <option value="Loyer">Achat</option>
+                <option value="Abonnements">Abonnements</option>
+                <option value="Fournitures">Fournitures</option>
+                <option value="Impôts">Impôts</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">

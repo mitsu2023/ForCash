@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Search, ArrowUpDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, MoreHorizontal, Calendar } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { Search, ArrowUpDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, MoreHorizontal, Calendar, Eye, StickyNote, AlertTriangle, X } from "lucide-react"
 import { mockAccounts } from "@/lib/mock-data"
 
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
@@ -57,6 +57,156 @@ function StatusBadge({ status }: { status: string }) {
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
       {status}
     </span>
+  )
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  INCOME: "Entrée",
+  EXPENSE: "Sortie",
+  TRANSFER: "Virement",
+}
+
+function TransactionDetailModal({ tx, onClose }: { tx: Transaction; onClose: () => void }) {
+  const account = mockAccounts.find((a) => a.id === tx.accountId)
+  const isPositive = tx.amount > 0
+  const amountColor = tx.type === "TRANSFER" ? "text-gray-700" : isPositive ? "text-emerald-600" : "text-red-500"
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKey)
+    return () => document.removeEventListener("keydown", handleKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <TransactionIcon type={tx.type} />
+            <div>
+              <p className="text-base font-semibold text-gray-900">{tx.description}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{TYPE_LABELS[tx.type] ?? tx.type}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Montant */}
+        <div className="px-6 py-5 border-b border-gray-100">
+          <p className="text-xs text-gray-400 mb-1">Montant</p>
+          <p className={`text-3xl font-bold ${amountColor}`}>
+            {isPositive ? "+" : ""}{fmt.format(tx.amount)}
+          </p>
+        </div>
+
+        {/* Détails */}
+        <div className="px-6 py-5 grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Date</p>
+            <p className="text-sm font-medium text-gray-900">{tx.date}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Compte</p>
+            <p className="text-sm font-medium text-gray-900">{account?.name ?? "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Catégorie</p>
+            <p className="text-sm font-medium text-gray-900">{tx.category}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Statut</p>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              {tx.status}
+            </span>
+          </div>
+          <div className="col-span-2">
+            <p className="text-xs text-gray-400 mb-1">Référence</p>
+            <p className="text-sm font-mono text-gray-500">{tx.id}</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 pb-6">
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-700 transition-colors"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TransactionMenu({ tx }: { tx: Transaction }) {
+  const [open, setOpen] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [open])
+
+  return (
+    <>
+      <div ref={ref} className="relative">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        >
+          <MoreHorizontal className="w-4 h-4" />
+        </button>
+
+        {open && (
+          <div className="absolute right-0 z-10 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+            <button
+              onClick={() => { setOpen(false); setShowDetail(true) }}
+              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Eye className="w-4 h-4 text-gray-400" />
+              Voir les détails
+            </button>
+            <button
+              onClick={() => { setOpen(false) }}
+              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <StickyNote className="w-4 h-4 text-gray-400" />
+              Ajouter une note
+            </button>
+            <div className="my-1 border-t border-gray-100" />
+            <button
+              onClick={() => { setOpen(false) }}
+              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
+            >
+              <AlertTriangle className="w-4 h-4" />
+              Signaler une erreur
+            </button>
+          </div>
+        )}
+      </div>
+
+      {showDetail && (
+        <TransactionDetailModal tx={tx} onClose={() => setShowDetail(false)} />
+      )}
+    </>
   )
 }
 
@@ -176,9 +326,7 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
                     <p className={`text-sm font-semibold w-28 text-right ${amountColor}`}>
                       {isPositive ? "+" : ""}{fmt.format(tx.amount)}
                     </p>
-                    <button className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
+                    <TransactionMenu tx={tx} />
                   </div>
                 </div>
               )

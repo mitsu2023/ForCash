@@ -5,10 +5,10 @@ export const mockAccounts = [
 ]
 
 export const mockTeam = [
-  { id: "1", name: "Alice Dupont",  initials: "AD", email: "alice.dupont@forcash.fr",   role: "Administrateur", status: "Actif",      joinedAt: "2024-01-10", lastSeen: "Il y a 5 minutes", isLastAdmin: true  },
-  { id: "2", name: "Marc Bernard",  initials: "MB", email: "marc.bernard@forcash.fr",   role: "Gestionnaire",   status: "Actif",      joinedAt: "2024-03-22", lastSeen: "Il y a 2 heures",  isLastAdmin: false },
-  { id: "3", name: "Sophie Chen",   initials: "SC", email: "sophie.chen@forcash.fr",    role: "Lecteur",        status: "Actif",      joinedAt: "2024-06-15", lastSeen: "Il y a 1 jour",    isLastAdmin: false },
-  { id: "4", name: "Thomas Roy",    initials: "TR", email: "thomas.roy@forcash.fr",     role: "Gestionnaire",   status: "En attente", joinedAt: "2025-02-01", lastSeen: "Jamais connecté",  isLastAdmin: false },
+  { id: "1", name: "Miarintsoa Ravelonjatovo",  initials: "MR", email: "miar.ravel@forcash.fr",   role: "Administrateur", status: "Actif",      joinedAt: "2024-01-10", lastSeen: "Il y a 5 minutes", isLastAdmin: true  },
+  { id: "2", name: "Mitsu Miryu",  initials: "MM", email: "miryu.mitsu@forcash.fr",   role: "Lecteur",   status: "Actif",      joinedAt: "2024-03-22", lastSeen: "Il y a 2 heures",  isLastAdmin: false },
+  { id: "3", name: "Natty Ariantsoa",   initials: "NA", email: "aria.natsu@forcash.fr",    role: "Gestionnaire",        status: "Actif",      joinedAt: "2024-06-15", lastSeen: "Il y a 1 jour",    isLastAdmin: false },
+  { id: "4", name: "Nikky Natolotra",    initials: "NN", email: "nikky.nat@forcash.fr",     role: "Gestionnaire",   status: "En attente", joinedAt: "2025-02-01", lastSeen: "Jamais connecté",  isLastAdmin: false },
 ]
 
 export const mockTransactions = [
@@ -20,4 +20,5 @@ export const mockTransactions = [
   { id: "6", accountId: "3", description: "Abonnement Notion", amount: -16, type: "EXPENSE", date: "2025-03-08", category: "Abonnements", status: "Validée" },
   { id: "7", accountId: "1", description: "Remboursement ami", amount: 60, type: "INCOME", date: "2025-03-10", category: "Divers", status: "Validée" },
   { id: "8", accountId: "3", description: "Facture client B", amount: 3200, type: "INCOME", date: "2025-03-12", category: "Ventes", status: "Validée" },
+  { id: "9", accountId: "1", description: "Achat Genshin Impact", amount: 80, type: "EXPENSE", date: "2025-03-14", category: "Loisir", status: "Validée" }
 ]

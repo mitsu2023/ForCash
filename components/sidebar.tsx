@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   CreditCard,
   ArrowLeftRight,
-  TrendingUp,
   Users,
   Settings,
   CircleUserRound,
@@ -16,8 +15,7 @@ const navLinks = [
   { href: "/", label: "Vue d'ensemble", icon: LayoutDashboard },
   { href: "/accounts", label: "Comptes", icon: CreditCard },
   { href: "/transactions", label: "Transactions", icon: ArrowLeftRight },
-  { href: "/forecasts", label: "Prévisions", icon: TrendingUp },
-  { href: "/team", label: "Équipe", icon: Users },
+{ href: "/team", label: "Équipe", icon: Users },
   { href: "/settings", label: "Paramètres", icon: Settings },
 ]
 
