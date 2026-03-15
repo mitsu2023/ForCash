@@ -1,4 +1,4 @@
-import { mockAccounts } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 import { NewAccountDialog } from "@/components/new-account-dialog"
 import { Copy, Minus, CalendarClock, EyeOff } from "lucide-react"
 
@@ -10,8 +10,9 @@ const bankColors: Record<string, string> = {
   "Société Générale":"text-red-500",
 }
 
-export default function AccountsPage() {
-  const totalBalance = mockAccounts.reduce((sum, a) => sum + a.balance, 0)
+export default async function AccountsPage() {
+  const accounts = await prisma.financialAccount.findMany()
+  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0)
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -37,7 +38,7 @@ export default function AccountsPage() {
             <span className="text-sm text-gray-500">Comptes actifs</span>
             <Minus className="w-4 h-4 text-gray-300" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">{mockAccounts.length}</p>
+          <p className="text-2xl font-bold text-gray-900">{accounts.length}</p>
           <p className="text-xs text-gray-400 mt-1">Sur 1 établissement bancaire</p>
         </div>
 
@@ -54,7 +55,7 @@ export default function AccountsPage() {
       {/* Vue d'ensemble */}
       <div className="bg-white rounded-xl border border-gray-200">
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">Vue d'ensemble des comptes</h2>
+          <h2 className="text-base font-semibold text-gray-900">Vue d&apos;ensemble des comptes</h2>
           <p className="text-sm text-gray-400 mt-0.5">
             Gérez vos comptes bancaires et suivez leurs soldes en temps réel
           </p>
@@ -72,7 +73,7 @@ export default function AccountsPage() {
 
           {/* Lignes comptes */}
           <div className="divide-y divide-gray-100">
-            {mockAccounts.map((account) => {
+            {accounts.map((account) => {
               const pct = (account.balance / totalBalance) * 100
               const colorClass = bankColors[account.bank] ?? "text-gray-500"
               return (

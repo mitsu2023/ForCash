@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(ip route:*)",
+      "WebFetch(domain:www.better-auth.com)"
+    ]
+  }
+}

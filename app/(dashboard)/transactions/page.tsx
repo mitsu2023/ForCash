@@ -1,17 +1,34 @@
-import { mockAccounts, mockTransactions } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 import { TransactionsList } from "@/components/transactions-list"
 import { NewTransactionDialog } from "@/components/new-transaction-dialog"
 
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
 
-export default function TransactionsPage() {
-  const transactions = [...mockTransactions].sort((a, b) => b.date.localeCompare(a.date))
+export default async function TransactionsPage() {
+  const accounts = await prisma.financialAccount.findMany()
+  const rawTransactions = await prisma.transaction.findMany({
+    orderBy: { date: "desc" },
+  })
 
-  const totalEntrees = transactions
+  // Serialize dates to strings for the client component
+  const transactions = rawTransactions.map((t) => ({
+    id: t.id,
+    accountId: t.financialAccountId,
+    description: t.description,
+    amount: t.amount,
+    type: t.type,
+    date: new Intl.DateTimeFormat("fr-FR").format(t.date),
+    category: t.category,
+    status: t.status,
+  }))
+
+  const accountsList = accounts.map((a) => ({ id: a.id, name: a.name }))
+
+  const totalEntrees = rawTransactions
     .filter((t) => t.type === "INCOME")
     .reduce((sum, t) => sum + t.amount, 0)
 
-  const totalSorties = transactions
+  const totalSorties = rawTransactions
     .filter((t) => t.type === "EXPENSE")
     .reduce((sum, t) => sum + t.amount, 0)
 
@@ -63,7 +80,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* Filtres + liste (client component) */}
-      <TransactionsList transactions={transactions} />
+      <TransactionsList transactions={transactions} accounts={accountsList} />
     </div>
   )
 }

@@ -1,14 +1,16 @@
-import { mockTeam } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 import { TeamList } from "@/components/team-list"
 import { InviteMemberDialog } from "@/components/invite-member-dialog"
 import { Crown, Shield, Mail, Users } from "lucide-react"
 
-export default function TeamPage() {
-  const total      = mockTeam.length
-  const actifs     = mockTeam.filter((m) => m.status === "Actif").length
-  const admins     = mockTeam.filter((m) => m.role === "Administrateur").length
-  const managers   = mockTeam.filter((m) => m.role === "Gestionnaire").length
-  const enAttente  = mockTeam.filter((m) => m.status === "En attente").length
+export default async function TeamPage() {
+  const members = await prisma.teamMember.findMany()
+
+  const total      = members.length
+  const actifs     = members.filter((m) => m.status === "Actif").length
+  const admins     = members.filter((m) => m.role === "Administrateur").length
+  const managers   = members.filter((m) => m.role === "Gestionnaire").length
+  const enAttente  = members.filter((m) => m.status === "En attente").length
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -58,7 +60,12 @@ export default function TeamPage() {
       </div>
 
       {/* Filtres + liste */}
-      <TeamList members={mockTeam} />
+      <TeamList members={members.map((m) => ({
+        ...m,
+        joinedAt: m.joinedAt.toISOString().slice(0, 10),
+        createdAt: m.createdAt.toISOString(),
+        updatedAt: m.updatedAt.toISOString(),
+      }))} />
     </div>
   )
 }

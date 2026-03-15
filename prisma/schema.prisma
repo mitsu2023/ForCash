@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ── Better Auth models ──────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String    @db.Text
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId(length: 191)])
+  @@map("account")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?  @db.Text
+  userAgent String?  @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId(length: 191)])
+  @@map("session")
+}
+
+model Verification {
+  id         String   @id
+  identifier String   @db.Text
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier(length: 191)])
+  @@map("verification")
+}
+
+// ── Application models ──────────────────────────────────
+
+model FinancialAccount {
+  id       String @id @default(cuid())
+  name     String
+  type     String // PERSONAL | BUSINESS
+  balance  Float  @default(0)
+  currency String @default("EUR")
+  bank     String
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("financial_account")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  type        String // INCOME | EXPENSE | TRANSFER
+  date        DateTime
+  category    String
+  status      String   @default("Validée")
+
+  financialAccount   FinancialAccount @relation(fields: [financialAccountId], references: [id], onDelete: Cascade)
+  financialAccountId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([financialAccountId])
+  @@map("transaction")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  initials    String
+  email       String   @unique
+  role        String   // Administrateur | Gestionnaire | Lecteur
+  status      String   @default("En attente")
+  joinedAt    DateTime @default(now())
+  lastSeen    String   @default("Jamais connecté")
+  isLastAdmin Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

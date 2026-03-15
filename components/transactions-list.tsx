@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Search, ArrowUpDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, MoreHorizontal, Calendar, Eye, StickyNote, AlertTriangle, X } from "lucide-react"
-import { mockAccounts } from "@/lib/mock-data"
 import { resolvedAmount } from "@/lib/utils"
 
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
@@ -67,8 +66,10 @@ const TYPE_LABELS: Record<string, string> = {
   TRANSFER: "Virement",
 }
 
-function TransactionDetailModal({ tx, onClose }: { tx: Transaction; onClose: () => void }) {
-  const account = mockAccounts.find((a) => a.id === tx.accountId)
+type AccountInfo = { id: string; name: string }
+
+function TransactionDetailModal({ tx, onClose, accounts }: { tx: Transaction; onClose: () => void; accounts: AccountInfo[] }) {
+  const account = accounts.find((a) => a.id === tx.accountId)
   const amount = resolvedAmount(tx.amount, tx.type)
   const isPositive = amount > 0
   const amountColor = tx.type === "TRANSFER" ? "text-gray-700" : isPositive ? "text-emerald-600" : "text-red-500"
@@ -152,7 +153,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: Transaction; onClose: () 
   )
 }
 
-function TransactionMenu({ tx }: { tx: Transaction }) {
+function TransactionMenu({ tx, accounts }: { tx: Transaction; accounts: AccountInfo[] }) {
   const [open, setOpen] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -206,13 +207,13 @@ function TransactionMenu({ tx }: { tx: Transaction }) {
       </div>
 
       {showDetail && (
-        <TransactionDetailModal tx={tx} onClose={() => setShowDetail(false)} />
+        <TransactionDetailModal tx={tx} accounts={accounts} onClose={() => setShowDetail(false)} />
       )}
     </>
   )
 }
 
-export function TransactionsList({ transactions }: { transactions: Transaction[] }) {
+export function TransactionsList({ transactions, accounts }: { transactions: Transaction[]; accounts: AccountInfo[] }) {
   const [search, setSearch] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
   const [accountFilter, setAccountFilter] = useState("all")
@@ -263,7 +264,7 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
             className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900/10 cursor-pointer"
           >
             <option value="all">Tous les comptes</option>
-            {mockAccounts.map((a) => (
+            {accounts.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}
           </select>
@@ -300,7 +301,7 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
             <p className="text-center text-gray-400 text-sm py-10">Aucune transaction trouvée.</p>
           ) : (
             filtered.map((tx) => {
-              const account = mockAccounts.find((a) => a.id === tx.accountId)
+              const account = accounts.find((a) => a.id === tx.accountId)
               const displayAmt = resolvedAmount(tx.amount, tx.type)
               const isPositive = displayAmt > 0
               const amountColor = tx.type === "TRANSFER"
@@ -329,7 +330,7 @@ export function TransactionsList({ transactions }: { transactions: Transaction[]
                     <p className={`text-sm font-semibold w-28 text-right ${amountColor}`}>
                       {isPositive ? "+" : ""}{fmt.format(displayAmt)}
                     </p>
-                    <TransactionMenu tx={tx} />
+                    <TransactionMenu tx={tx} accounts={accounts} />
                   </div>
                 </div>
               )
