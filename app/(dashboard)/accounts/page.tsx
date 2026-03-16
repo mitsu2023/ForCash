@@ -1,14 +1,11 @@
+export const dynamic = "force-dynamic"
+
 import { prisma } from "@/lib/prisma"
 import { NewAccountDialog } from "@/components/new-account-dialog"
+import { AccountOverviewList } from "@/components/account-overview-list"
 import { Copy, Minus, CalendarClock, EyeOff } from "lucide-react"
 
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
-
-const bankColors: Record<string, string> = {
-  "Crédit Agricole": "text-green-600",
-  "BNP Paribas":     "text-blue-600",
-  "Société Générale":"text-red-500",
-}
 
 export default async function AccountsPage() {
   const accounts = await prisma.financialAccount.findMany()
@@ -72,31 +69,18 @@ export default async function AccountsPage() {
           </div>
 
           {/* Lignes comptes */}
-          <div className="divide-y divide-gray-100">
-            {accounts.map((account) => {
-              const pct = (account.balance / totalBalance) * 100
-              const colorClass = bankColors[account.bank] ?? "text-gray-500"
-              return (
-                <div key={account.id} className="py-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{account.name}</p>
-                      <p className={`text-xs font-medium mt-0.5 ${colorClass}`}>{account.bank}</p>
-                    </div>
-                    <p className="text-sm font-semibold text-gray-900">{fmt.format(account.balance)}</p>
-                  </div>
-                  {/* Barre de progression */}
-                  <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="absolute left-0 top-0 h-full bg-gray-900 rounded-full"
-                      style={{ width: `${pct.toFixed(1)}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1 text-right">{pct.toFixed(1)}% du total</p>
-                </div>
-              )
-            })}
-          </div>
+          <AccountOverviewList
+            accounts={accounts.map((a) => ({
+              id: a.id,
+              name: a.name,
+              type: a.type,
+              balance: a.balance,
+              currency: a.currency,
+              bank: a.bank,
+              accountNumberLast4: a.accountNumberLast4,
+            }))}
+            totalBalance={totalBalance}
+          />
 
         </div>
       </div>

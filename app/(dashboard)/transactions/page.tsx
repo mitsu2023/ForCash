@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { prisma } from "@/lib/prisma"
 import { TransactionsList } from "@/components/transactions-list"
 import { NewTransactionDialog } from "@/components/new-transaction-dialog"

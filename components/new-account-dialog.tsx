@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -19,7 +20,43 @@ import {
 } from "@/components/ui/select"
 
 export function NewAccountDialog() {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const [name, setName] = useState("")
+  const [bank, setBank] = useState("")
+  const [accountNumber, setAccountNumber] = useState("")
+  const [type, setType] = useState("")
+  const [balance, setBalance] = useState("")
+  const [currency, setCurrency] = useState("EUR")
+
+  function reset() {
+    setName("")
+    setBank("")
+    setAccountNumber("")
+    setType("")
+    setBalance("")
+    setCurrency("EUR")
+  }
+
+  async function handleSubmit() {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/accounts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, bank, accountNumber, type, balance, currency }),
+      })
+      if (res.ok) {
+        reset()
+        setOpen(false)
+        router.refresh()
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -44,7 +81,22 @@ export function NewAccountDialog() {
                 Nom du compte
               </label>
               <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="ex. Compte courant BNP"
+                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus-visible:ring-gray-900"
+              />
+            </div>
+
+            {/* Banque */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Banque
+              </label>
+              <Input
+                value={bank}
+                onChange={(e) => setBank(e.target.value)}
+                placeholder="ex. BNP Paribas"
                 className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus-visible:ring-gray-900"
               />
             </div>
@@ -55,6 +107,8 @@ export function NewAccountDialog() {
                 Numéro de compte
               </label>
               <Input
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
                 placeholder="ex. FR76 3000 6000 0112 3456 7890 189"
                 className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus-visible:ring-gray-900 font-mono"
               />
@@ -66,7 +120,7 @@ export function NewAccountDialog() {
               <label className="text-sm font-medium text-gray-700">
                 Type de compte
               </label>
-              <Select>
+              <Select value={type} onValueChange={(v) => setType(v ?? "")}>
                 <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-gray-900 h-12 text-base">
                   <SelectValue placeholder="Sélectionner un type" />
                 </SelectTrigger>
@@ -101,6 +155,8 @@ export function NewAccountDialog() {
                 </label>
                 <Input
                   type="number"
+                  value={balance}
+                  onChange={(e) => setBalance(e.target.value)}
                   placeholder="0.00"
                   className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus-visible:ring-gray-900"
                 />
@@ -109,7 +165,7 @@ export function NewAccountDialog() {
                 <label className="text-sm font-medium text-gray-700">
                   Devise
                 </label>
-                <Select defaultValue="EUR">
+                <Select value={currency} onValueChange={(v) => setCurrency(v ?? "EUR")}>
                   <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-gray-900">
                     <SelectValue />
                   </SelectTrigger>
@@ -131,8 +187,12 @@ export function NewAccountDialog() {
             >
               Annuler
             </Button>
-            <Button className="bg-gray-900 hover:bg-gray-700 text-white">
-              Créer le compte
+            <Button
+              onClick={handleSubmit}
+              disabled={loading || !name || !bank || !type}
+              className="bg-gray-900 hover:bg-gray-700 text-white"
+            >
+              {loading ? "Création..." : "Créer le compte"}
             </Button>
           </DialogFooter>
         </DialogContent>

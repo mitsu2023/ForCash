@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { prisma } from "@/lib/prisma"
 import { resolvedAmount } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -82,7 +84,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-8">
             {accounts.map((account) => (
-              <Link key={account.id} href={`/accounts/${account.id}`}>
+              <Link key={account.id} href="/accounts">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm">

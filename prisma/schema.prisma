@@ -74,12 +74,14 @@ model Verification {
 // ── Application models ──────────────────────────────────
 
 model FinancialAccount {
-  id       String @id @default(cuid())
-  name     String
-  type     String // PERSONAL | BUSINESS
-  balance  Float  @default(0)
-  currency String @default("EUR")
-  bank     String
+  id                 String  @id @default(cuid())
+  name               String
+  type               String  // PERSONAL | BUSINESS
+  balance            Float   @default(0)
+  currency           String  @default("EUR")
+  bank               String
+  accountNumber      String? @db.Text // encrypted
+  accountNumberLast4 String? // last 4 digits in clear
 
   transactions Transaction[]
 

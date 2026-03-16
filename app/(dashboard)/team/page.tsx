@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { prisma } from "@/lib/prisma"
 import { TeamList } from "@/components/team-list"
 import { InviteMemberDialog } from "@/components/invite-member-dialog"

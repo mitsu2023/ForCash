@@ -15,3 +15,14 @@ export async function GET(
 
   return NextResponse.json(account)
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+
+  await prisma.financialAccount.delete({ where: { id } })
+
+  return NextResponse.json({ success: true })
+}
