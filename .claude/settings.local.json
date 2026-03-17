@@ -3,7 +3,11 @@
     "allow": [
       "Bash(cd:*)",
       "Bash(ip route:*)",
-      "WebFetch(domain:www.better-auth.com)"
+      "WebFetch(domain:www.better-auth.com)",
+      "Bash(rm -rf prisma/migrations/20260317111003_sync)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e \"const pkg = require\\(''@prisma/client/package.json''\\); console.log\\(pkg.version\\)\")"
     ]
   }
 }

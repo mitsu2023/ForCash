@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { prisma } from "@/lib/prisma"
+import { getUserId } from "@/lib/session"
 import { resolvedAmount } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,14 +10,18 @@ import Link from "next/link"
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
 
 export default async function DashboardPage() {
-  const accounts = await prisma.financialAccount.findMany()
+  const userId = (await getUserId())!
+  const accounts = await prisma.financialAccount.findMany({ where: { userId } })
   const transactions = await prisma.transaction.findMany({
+    where: { financialAccount: { userId } },
     orderBy: { date: "desc" },
     take: 5,
     include: { financialAccount: true },
   })
 
-  const allTransactions = await prisma.transaction.findMany()
+  const allTransactions = await prisma.transaction.findMany({
+    where: { financialAccount: { userId } },
+  })
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0)
   const totalIncome = allTransactions
     .filter((t) => t.type === "INCOME")

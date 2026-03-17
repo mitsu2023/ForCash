@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { prisma } from "@/lib/prisma"
+import { getUserId } from "@/lib/session"
 import { NewAccountDialog } from "@/components/new-account-dialog"
 import { AccountOverviewList } from "@/components/account-overview-list"
 import { Copy, Minus, CalendarClock, EyeOff } from "lucide-react"
@@ -8,7 +9,8 @@ import { Copy, Minus, CalendarClock, EyeOff } from "lucide-react"
 const fmt = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
 
 export default async function AccountsPage() {
-  const accounts = await prisma.financialAccount.findMany()
+  const userId = (await getUserId())!
+  const accounts = await prisma.financialAccount.findMany({ where: { userId } })
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0)
 
   return (

@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { encrypt } from "@/lib/crypto"
+import { getUserId } from "@/lib/session"
 
 export async function GET() {
-  const accounts = await prisma.financialAccount.findMany()
+  const userId = await getUserId()
+  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+
+  const accounts = await prisma.financialAccount.findMany({ where: { userId } })
   return NextResponse.json(accounts)
 }
 
 export async function POST(request: NextRequest) {
+  const userId = await getUserId()
+  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+
   const body = await request.json()
   const { name, type, balance, currency, bank, accountNumber } = body
 
@@ -24,6 +31,7 @@ export async function POST(request: NextRequest) {
       bank,
       accountNumber: accountNumber ? encrypt(accountNumber) : null,
       accountNumberLast4: last4 || null,
+      userId,
     },
   })
 

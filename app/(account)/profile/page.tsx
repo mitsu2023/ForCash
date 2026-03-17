@@ -84,7 +84,7 @@ export default function ProfilePage() {
     : ""
 
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Profil</h1>
 
       <div className="space-y-6">
