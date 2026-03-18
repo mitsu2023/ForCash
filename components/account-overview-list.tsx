@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { MoreVertical, Eye, Trash2, Wifi, X } from "lucide-react"
+import { MoreVertical, Eye, EyeOff, Trash2, Wifi, X } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +40,21 @@ function maskedNumber(last4: string | null) {
   return `•••• •••• •••• ${last4}`
 }
 
-function AccountCard({ account }: { account: Account }) {
+function formatAccountNumber(value: string) {
+  return value.replace(/\s/g, "").replace(/(.{4})/g, "$1 ").trim()
+}
+
+function AccountCard({
+  account,
+  revealedNumber,
+  onToggleReveal,
+  loading,
+}: {
+  account: Account
+  revealedNumber?: string | null
+  onToggleReveal?: () => void
+  loading?: boolean
+}) {
   return (
     <div className="relative w-full aspect-[1.6/1] rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-6 flex flex-col justify-between shadow-2xl">
       {/* Fond décoratif */}
@@ -62,11 +76,20 @@ function AccountCard({ account }: { account: Account }) {
         </span>
       </div>
 
-      {/* Numéro de carte */}
-      <div className="relative">
+      {/* Numéro de carte + bouton œil */}
+      <div className="relative flex items-center gap-3">
         <p className="text-xl font-mono tracking-[0.2em] text-white">
-          {maskedNumber(account.accountNumberLast4)}
+          {revealedNumber ? formatAccountNumber(revealedNumber) : maskedNumber(account.accountNumberLast4)}
         </p>
+        {onToggleReveal && (
+          <button
+            onClick={onToggleReveal}
+            disabled={loading}
+            className="text-white/50 hover:text-white transition-colors disabled:opacity-30"
+          >
+            {revealedNumber ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        )}
       </div>
 
       {/* Ligne du bas : infos */}
@@ -87,6 +110,8 @@ function AccountCard({ account }: { account: Account }) {
 export function AccountOverviewList({ accounts, totalBalance }: { accounts: Account[]; totalBalance: number }) {
   const router = useRouter()
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
+  const [revealedNumber, setRevealedNumber] = useState<string | null>(null)
+  const [loadingNumber, setLoadingNumber] = useState(false)
 
   async function handleDelete(id: string) {
     const res = await fetch(`/api/accounts/${id}`, { method: "DELETE" })
@@ -151,7 +176,7 @@ export function AccountOverviewList({ accounts, totalBalance }: { accounts: Acco
       </div>
 
       {/* Dialog détails du compte */}
-      <Dialog open={!!selectedAccount} onOpenChange={(open) => { if (!open) setSelectedAccount(null) }}>
+      <Dialog open={!!selectedAccount} onOpenChange={(open) => { if (!open) { setSelectedAccount(null); setRevealedNumber(null) } }}>
         <DialogContent className="bg-white border-gray-200 text-gray-900 sm:max-w-lg p-0 overflow-hidden">
           <DialogHeader className="px-6 pt-6 pb-0">
             <DialogTitle className="text-lg font-semibold text-gray-900">Détails du compte</DialogTitle>
@@ -160,7 +185,27 @@ export function AccountOverviewList({ accounts, totalBalance }: { accounts: Acco
           {selectedAccount && (
             <div className="px-6 pb-6 space-y-5">
               {/* Carte bancaire */}
-              <AccountCard account={selectedAccount} />
+              <AccountCard
+                account={selectedAccount}
+                revealedNumber={revealedNumber}
+                loading={loadingNumber}
+                onToggleReveal={async () => {
+                  if (revealedNumber) {
+                    setRevealedNumber(null)
+                    return
+                  }
+                  setLoadingNumber(true)
+                  try {
+                    const res = await fetch(`/api/accounts/${selectedAccount.id}`)
+                    if (res.ok) {
+                      const data = await res.json()
+                      setRevealedNumber(data.accountNumber ?? null)
+                    }
+                  } finally {
+                    setLoadingNumber(false)
+                  }
+                }}
+              />
 
               {/* Infos complémentaires */}
               <div className="grid grid-cols-2 gap-4">

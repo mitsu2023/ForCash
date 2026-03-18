@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getUserId } from "@/lib/session"
+import { decrypt } from "@/lib/crypto"
 
 export async function GET(
   _request: NextRequest,
@@ -16,7 +17,10 @@ export async function GET(
     return NextResponse.json({ error: "Compte introuvable" }, { status: 404 })
   }
 
-  return NextResponse.json(account)
+  return NextResponse.json({
+    ...account,
+    accountNumber: account.accountNumber ? decrypt(account.accountNumber) : null,
+  })
 }
 
 export async function DELETE(

@@ -27,7 +27,7 @@ export default async function TransactionsPage() {
     status: t.status,
   }))
 
-  const accountsList = accounts.map((a) => ({ id: a.id, name: a.name }))
+  const accountsList = accounts.map((a) => ({ id: a.id, name: a.name, last4: a.accountNumberLast4 }))
 
   const totalEntrees = rawTransactions
     .filter((t) => t.type === "INCOME")
@@ -44,7 +44,7 @@ export default async function TransactionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-        <NewTransactionDialog />
+        <NewTransactionDialog accounts={accountsList} />
       </div>
 
       {/* 4 cartes résumé */}
