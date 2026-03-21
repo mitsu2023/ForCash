@@ -211,13 +211,11 @@ export function NewTransactionDialog({ accounts }: NewTransactionDialogProps) {
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/20 cursor-pointer"
               >
                 <option value="">Sélectionner une catégorie</option>
-                <option value="Ventes">Ventes</option>
-                <option value="Salaires">Salaires</option>
+                <option value="Vente">Vente</option>
                 <option value="Achat">Achat</option>
-                <option value="Abonnements">Abonnements</option>
-                <option value="Fournitures">Fournitures</option>
+                <option value="Abonnement">Abonnement</option>
                 <option value="Impôts">Impôts</option>
-                <option value="Autre">Autre</option>
+                <option value="Autres">Autres</option>
               </select>
             </div>
           </div>

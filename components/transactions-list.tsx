@@ -39,22 +39,31 @@ function TransactionIcon({ type }: { type: string }) {
   )
 }
 
+const CATEGORY_COLORS: Record<string, string> = {
+  Vente: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  Achat: "bg-red-50 text-red-700 border border-red-200",
+  Abonnement: "bg-blue-50 text-blue-700 border border-blue-200",
+  "Impôts": "bg-yellow-50 text-yellow-700 border border-yellow-200",
+  Autres: "bg-white text-gray-700 border border-gray-200",
+}
+
 function CategoryBadge({ category }: { category: string }) {
-  const isHighlight = category === "Ventes"
+  const colors = CATEGORY_COLORS[category] ?? CATEGORY_COLORS.Autres
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-      isHighlight
-        ? "bg-gray-900 text-white"
-        : "bg-white text-gray-700 border border-gray-200"
-    }`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors}`}>
       {category}
     </span>
   )
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const isFailed = status === "Échouée"
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+      isFailed
+        ? "bg-red-50 text-red-700 border border-red-200"
+        : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+    }`}>
       {status}
     </span>
   )

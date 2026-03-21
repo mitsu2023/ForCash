@@ -50,12 +50,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Résoudre le compte destinataire
-  let resolvedDestination: { id: string } | null = null
+  let resolvedDestination: { id: string; userId: string } | null = null
 
   if (destinationAccountId) {
     // Transfert interne (même utilisateur)
     resolvedDestination = await prisma.financialAccount.findFirst({
       where: { id: destinationAccountId, userId },
+      select: { id: true, userId: true },
     })
   } else if (externalIban) {
     // IBAN externe : chercher si ce numéro existe dans le système
@@ -101,7 +102,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(failed, { status: 201 })
   }
 
-  const type = resolvedDestination ? "TRANSFER" : "EXPENSE"
+  // Déterminer si c'est un transfert interne (même utilisateur)
+  const isInternalTransfer = resolvedDestination?.userId === userId
 
   // 1. Débiter le compte source
   await prisma.financialAccount.update({
@@ -110,11 +112,12 @@ export async function POST(request: NextRequest) {
   })
 
   // 2. Créer la transaction sortante sur le compte source
+  // Transfert interne → TRANSFER, sinon → EXPENSE (débit)
   const outgoing = await prisma.transaction.create({
     data: {
       description,
       amount: -parsedAmount,
-      type,
+      type: isInternalTransfer ? "TRANSFER" : "EXPENSE",
       date: now,
       category,
       status: "Validée",
@@ -129,11 +132,12 @@ export async function POST(request: NextRequest) {
       data: { balance: { increment: parsedAmount } },
     })
 
+    // Transfert interne → TRANSFER, externe → INCOME (crédit)
     await prisma.transaction.create({
       data: {
         description,
         amount: parsedAmount,
-        type: "TRANSFER",
+        type: isInternalTransfer ? "TRANSFER" : "INCOME",
         date: now,
         category,
         status: "Validée",
